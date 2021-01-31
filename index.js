@@ -1,38 +1,36 @@
-const TelegramBot = require('node-telegram-bot-api');
-const token = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';
-const bot = new TelegramBot(token, { polling: true });
+const TelegramBot  = require('node-telegram-bot-api');
+const token        = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';
+const bot          = new TelegramBot(token, { polling: true });
 
-const keyboard = [
-  [
-    {
-      text: 'Расписание на сегодня',
-      callback_data: 'today'
-    }
-  ],
-  [
-    {
-      text: 'Расписание на завтра',
-      callback_data: 'tomorrow'
-    }
-  ],
-  [
-    {
-      text: 'Расписание на неделю',
-      callback_data: 'week'
-    }
-  ]
-];
+const application  = require('./src/js/app-data.js'); // Данные для приложения
+const keyboards    = require('./src/js/keyboards.js'); // Клавиатуры
 
+
+/* Commands */
 bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id;
-  bot.sendPhoto(chatId, 'src/logo.jpg', {
+  bot.sendPhoto(chatId, 'src/img/logo.jpg', {
     reply_markup: {
-      inline_keyboard: keyboard
+      inline_keyboard: keyboards.scheduleKeyboard,
     },
     caption: `
-      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов группы БСТ1902 о расписании занятий.\n\nПожалуйста, выберите интересующее Вас время.
-      `
+      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов группы БСТ1902 о расписании занятий.\n\nПожалуйста, выберите интересующее Вас время.`
   });
+});
+
+bot.onText(/\/today/, msg => {
+  const chatId = msg.chat.id;
+  schedule.today(chatId);
+});
+
+bot.onText(/\/tomorrow/, msg => {
+  const chatId = msg.chat.id;
+  schedule.tomorrow(chatId);
+});
+
+bot.onText(/\/week/, msg => {
+  const chatId = msg.chat.id;
+  schedule.week(chatId);
 });
 
 bot.on('callback_query', (query) => {
@@ -51,27 +49,38 @@ bot.on('callback_query', (query) => {
   }
 });
 
+/* Schedule object */
 const schedule = {
   today: function (id) {
+    const date = new Date();
+
+    const day = date.getDate();
+    const weekday = application.calendar.weekday[date.getDay()];
+    const month = application.calendar.month[date.getMonth()];
+    
     bot.sendMessage(id, `
-        Расписание на сегодня для группы БСТ1902:
-        1. Иностранный язык
-        2. Базовые средства МП
+Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902 \u{1F4CC}
+------------------------------------------------------------
+1. Иностранный язык - {времяНачала - времяКонца}
+2. Базовые средства МП - {времяНачала - времяКонца}
       `);
   },
 
   tomorrow: function (id) {
     bot.sendMessage(id, `
-      Расписание на завтра для группы БСТ1902:
-      1. Лекция Электроника
-      2. Практика Электроника
+Расписание на завтра для группы БСТ1902 \u{1F4CC}
+--------------------------------------------------
+1. Лекция Электроника - {времяНачала - времяКонца}
+2. Практика Электроника - {времяНачала - времяКонца}
     `);
   },
 
   week: function (id) {
     bot.sendMessage(id, `
-      Нечётная (нижняя) неделя. Расписание:
+      Нечётная (нижняя) неделя.\n\u{1F4CC} Расписание:
       бла бла бла бла
     `);
   }
 };
+
+
