@@ -1,15 +1,15 @@
-const TelegramBot  = require('node-telegram-bot-api');
-const token        = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';
-const bot          = new TelegramBot(token, { polling: true });
+const TelegramBot = require('node-telegram-bot-api');
+const token = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';
+const bot = new TelegramBot(token, { polling: true });
 
-const application  = require('./src/js/app-data.js'); // Данные для приложения
-const keyboards    = require('./src/js/keyboards.js'); // Клавиатуры
+const application = require('./src/js/app-data.js'); // Данные для приложения
+const keyboards = require('./src/js/keyboards.js'); // Клавиатуры
 
 
 /* Commands */
 bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id;
-  bot.sendPhoto(chatId, 'src/img/logo.jpg', {
+  bot.sendPhoto(chatId, 'src/img/logo.png', {
     reply_markup: {
       inline_keyboard: keyboards.scheduleKeyboard,
     },
@@ -54,25 +54,40 @@ const schedule = {
   today: function (id) {
     const date = new Date();
 
-    const day = date.getDate();
-    const weekday = application.calendar.weekday[date.getDay()];
-    const month = application.calendar.month[date.getMonth()];
-    
-    bot.sendMessage(id, `
+    if (validateDate(date)) {
+      const day = date.getDate();
+      const weekday = application.calendar.weekday[date.getDay()];
+      const month = application.calendar.month[date.getMonth()];
+
+      bot.sendMessage(id, `
 Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902 \u{1F4CC}
 ------------------------------------------------------------
 1. Иностранный язык - {времяНачала - времяКонца}
 2. Базовые средства МП - {времяНачала - времяКонца}
       `);
+    } else {
+      bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
+    }
   },
 
   tomorrow: function (id) {
-    bot.sendMessage(id, `
-Расписание на завтра для группы БСТ1902 \u{1F4CC}
+    const todayDate = new Date();
+    const tomorrowDate = new Date(todayDate.getTime() + (24 * 60 * 60 * 1000));
+
+    if (validateDate(tomorrowDate)) {
+      const day = tomorrowDate.getDate();
+      const weekday = application.calendar.weekday[tomorrowDate.getDay()];
+      const month = application.calendar.month[tomorrowDate.getMonth()];
+
+      bot.sendMessage(id, `
+Расписание на завтра (${day} ${month}, ${weekday}) для группы БСТ1902 \u{1F4CC}
 --------------------------------------------------
 1. Лекция Электроника - {времяНачала - времяКонца}
 2. Практика Электроника - {времяНачала - времяКонца}
     `);
+    } else {
+      bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
+    }
   },
 
   week: function (id) {
@@ -82,5 +97,14 @@ const schedule = {
     `);
   }
 };
+
+/* Functions */
+function validateDate(date) {
+  if (date.getDay() == 0 || date.getDay() == 6) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 
