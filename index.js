@@ -9,7 +9,7 @@ const keyboards = require('./src/js/keyboards.js'); // Клавиатуры
 /* Commands */
 bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id;
-  bot.sendPhoto(chatId, 'src/img/logo.png', {
+  bot.sendPhoto(chatId, 'src/img/start-screen.png', {
     reply_markup: {
       inline_keyboard: keyboards.scheduleKeyboard,
     },
