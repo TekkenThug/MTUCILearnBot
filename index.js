@@ -35,6 +35,7 @@ bot.onText(/\/week/, msg => {
 
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id;
+  //bot.deleteMessage(chatId, query.message.message_id);
 
   if (query.data === 'today') {
     schedule.today(chatId);
@@ -60,10 +61,13 @@ const schedule = {
       const month = application.calendar.month[date.getMonth()];
 
       bot.sendMessage(id, `
-Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902 \u{1F4CC}
+\u{1F4C6} Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902
 ------------------------------------------------------------
-1. Иностранный язык - {времяНачала - времяКонца}
-2. Базовые средства МП - {времяНачала - времяКонца}
+1. Иностранный язык {Аудитория} {Преподаватель}
+   {времяНачала - времяКонца}
+------------------------------------------------------------
+2. Базовые средства МП {Аудитория} {Преподаватель}
+   {времяНачала - времяКонца}
       `);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
