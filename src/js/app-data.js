@@ -30,7 +30,23 @@ const weekdayNameDB = {
   3: "wed",
   4: "thu",
   5: "fri",
+};
+
+const intervalTime = {
+  1: "9:30-11:05",
+  2: "11:20-12:55",
+  3: "13:10-14:45",
+  4: "15:25-17:00",
+  5: "17:15-18:50",
+};
+
+const lessonType = {
+  lecture: "Лекция",
+  practice: "Практика",
+  laboratory: "Лабораторная"
 }
 
 module.exports.calendar = calendarOptionsRU;
 module.exports.weekdayName = weekdayNameDB;
+module.exports.intervals = intervalTime;
+module.exports.lessonType = lessonType;

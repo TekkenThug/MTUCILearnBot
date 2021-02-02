@@ -55,7 +55,7 @@ bot.on('callback_query', (query) => {
 
 /* Schedule object */
 const schedule = {
-  today: function (id) {
+  today: async function (id) {
     const date = new Date();
 
     if (validateDate(date)) {
@@ -63,23 +63,15 @@ const schedule = {
       const weekday = application.calendar.weekday[date.getDay()];
       const month = application.calendar.month[date.getMonth()];
 
-      getTimetable(date);
-
       bot.sendMessage(id, `
 \u{1F4C6} Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902
-------------------------------------------------------------
-1. Иностранный язык {Аудитория} {Преподаватель}
-   {времяНачала - времяКонца}
-------------------------------------------------------------
-2. Базовые средства МП {Аудитория} {Преподаватель}
-   {времяНачала - времяКонца}
-      `);
+${await getTimetable(date)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
     }
   },
 
-  tomorrow: function (id) {
+  tomorrow: async function (id) {
     const todayDate = new Date();
     const tomorrowDate = new Date(todayDate.getTime() + (24 * 60 * 60 * 1000));
 
@@ -88,24 +80,20 @@ const schedule = {
       const weekday = application.calendar.weekday[tomorrowDate.getDay()];
       const month = application.calendar.month[tomorrowDate.getMonth()];
 
-      getTimetable(tomorrowDate);
-
       bot.sendMessage(id, `
-Расписание на завтра (${day} ${month}, ${weekday}) для группы БСТ1902 \u{1F4CC}
---------------------------------------------------
-1. Лекция Электроника - {времяНачала - времяКонца}
-2. Практика Электроника - {времяНачала - времяКонца}
-    `);
+\u{1F4C6} Расписание на завтра (${day} ${month}, ${weekday}) для группы БСТ1902
+${await getTimetable(tomorrowDate)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
     }
   },
 
-  week: function (id) {
+  week: async function (id) {
+    const date = new Date();
+
     bot.sendMessage(id, `
-      Нечётная (нижняя) неделя.\n\u{1F4CC} Расписание:
-      бла бла бла бла
-    `);
+\u{1F4C6} Расписание на неделю:
+${await getTimetableForWeek(date)}`);
   }
 };
 
@@ -145,21 +133,65 @@ function isEvenWeek(date) {
   }
 }
 
-async function queryToDB(odd, weekdayName) {
+function msgLayout(subject, count) {
+  let msg =
+    `------------------------------------------------
+${count}. ${subject.name} - ${application.lessonType[subject.type]}
+\u{1F55C} ${application.intervals[subject.number]}
+\u{1F3DB} ${subject.classroom}
+\u{1F468} ${subject.author}
+`;
+
+  return msg
+}
+
+async function queryToDB(odd, weekdayName, isWeekSchedule = false) {
   const client = await MongoClient.connect(urlConnect);
   const db = client.db(dbName);
   const resultDocument = await db.collection('groups').findOne({ groupName: "БСТ1902" });
 
   client.close();
 
-  return resultDocument[odd][weekdayName];
+  return !isWeekSchedule ? resultDocument[odd][weekdayName] : resultDocument[odd];
 }
 
 async function getTimetable(date) {
   const odd = isEvenWeek(date);
   const weekdayName = application.weekdayName[date.getDay()];
-
   const scheduleDayArray = await queryToDB(odd, weekdayName);
+
+  let msgAnswerText = ``;
+  let count = 1;
+
+  for (let subject of scheduleDayArray) {
+    msgAnswerText += msgLayout(subject, count);
+    count++;
+  }
+
+  return msgAnswerText
+}
+
+async function getTimetableForWeek(date) {
   
+  const odd = isEvenWeek(date);
+  const scheduleArray = await queryToDB(odd, 0, true);
+  
+  let msgAnswerText = ``;
+  let dayCount = 1;
+
+  for (let day in scheduleArray) {
+    let count = 1;
+    msgAnswerText += `${application.calendar.weekday[dayCount]} =>`;
+    
+    for (let subject of scheduleArray[day]) {
+      console.log(subject);
+      msgAnswerText += msgLayout(subject, count);
+      count++;
+    }
+
+    dayCount++;
+  }
+
+  return msgAnswerText
 }
 

@@ -13,7 +13,7 @@ const keyboardOfSchedule = [
   ],
   [
     {
-      text: '\u{1F4D7} Расписание на неделю',
+      text: '\u{1F4D7} Расписание на текущую неделю',
       callback_data: 'week'
     }
   ]
