@@ -128,12 +128,12 @@ function isEvenWeek(date) {
 
   if (startDay <= 4) {
     difference++;
-    console.log(difference)
+    //console.log(difference)
   }
 
   if (date.getDay() == 1) {
     difference++;
-    console.log(difference)
+    //console.log(difference)
   }
 
   difference % 2 ? odd = true : odd = false;
@@ -145,33 +145,21 @@ function isEvenWeek(date) {
   }
 }
 
-function queryToDB(odd, weekdayName) {
-  let returnArray = [];
+async function queryToDB(odd, weekdayName) {
+  const client = await MongoClient.connect(urlConnect);
+  const db = client.db(dbName);
+  const resultDocument = await db.collection('groups').findOne({ groupName: "БСТ1902" });
 
-  MongoClient.connect(urlConnect, async (error, client) => {
-    if (error) {
-      return console.log(error);
-    } else {
-      console.log("Connect successfully to server!")
-    }
+  client.close();
 
-    const db = client.db(dbName);
-
-    db.collection('groups').findOne({ groupName: "БСТ1902" }, (err, results) => {
-      returnArray = JSON.parse(JSON.stringify(results[odd][weekdayName]));
-      console.log(returnArray);
-    })
-
-    client.close();
-  });
-
-  //console.log(returnArray);
+  return resultDocument[odd][weekdayName];
 }
 
-function getTimetable(date) {
+async function getTimetable(date) {
   const odd = isEvenWeek(date);
   const weekdayName = application.weekdayName[date.getDay()];
 
-  queryToDB(odd, weekdayName);
+  const scheduleDayArray = await queryToDB(odd, weekdayName);
+  
 }
 
