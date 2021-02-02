@@ -24,4 +24,13 @@ const calendarOptionsRU = {
   }
 };
 
+const weekdayNameDB = {
+  1: "mon",
+  2: "tue",
+  3: "wed",
+  4: "thu",
+  5: "fri",
+}
+
 module.exports.calendar = calendarOptionsRU;
+module.exports.weekdayName = weekdayNameDB;
