@@ -5,6 +5,30 @@ const bot = new TelegramBot(token, { polling: true });
 const application = require('./src/js/app-data.js'); // Данные для приложения
 const keyboards = require('./src/js/keyboards.js'); // Клавиатуры
 
+const MongoClient = require('mongodb').MongoClient;
+const dbName = "schedule";
+const urlConnect = 'mongodb://localhost:27017/';
+
+MongoClient.connect(urlConnect, (error, client) => {
+  if (error) {
+    return console.log(error);
+  } else {
+    console.log("Connect successfully to server!")
+  }
+
+  const db = client.db(dbName);
+
+  db.collection('groups').findOne({groupName: "БСТ1902"}, (err, results) => {
+    const scheduleDay = results.odd.mon[0];
+
+    for (let key in scheduleDay) {
+      console.log(scheduleDay[key]);
+    }
+  });
+
+  client.close();
+})
+
 
 /* Commands */
 bot.onText(/\/start/, msg => {
@@ -35,7 +59,6 @@ bot.onText(/\/week/, msg => {
 
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id;
-  //bot.deleteMessage(chatId, query.message.message_id);
 
   if (query.data === 'today') {
     schedule.today(chatId);
