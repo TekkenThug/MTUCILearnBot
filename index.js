@@ -6,20 +6,26 @@ const application = require('./src/js/app-data.js');                // Данн�
 const keyboards = require('./src/js/keyboards.js');                 // Клавиатуры
 
 const MongoClient = require('mongodb').MongoClient;                 // Связь с клиентом MongoDb
-const dbName = "schedule";                                          // Имя БД
-const urlConnect = 'mongodb://localhost:27017/';                    // Адрес подключения
+const dbName = "Schedule";                                          // Имя БД
+const urlConnect = 'mongodb+srv://administrator:,fpflfyys[@cluster0.paq35.mongodb.net/Schedule';                    // Адрес подключения
 
 
 /* Commands */
 bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id;
   bot.sendPhoto(chatId, 'src/img/start-screen.png', {
-    reply_markup: {
-      inline_keyboard: keyboards.scheduleKeyboard,
-    },
     caption: `
-      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов группы БСТ1902 о расписании занятий.\n\nПожалуйста, выберите интересующее Вас время.`
+      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов МТУСИ о расписании занятий.\n\nПожалуйста, впишите название своей группы.`
   });
+});
+
+bot.onText(/\/dashboard/, msg => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, "Выберите интересующее Вас время", {
+    reply_markup: {
+      inline_keyboard: keyboards.scheduleKeyboard
+    }
+  })
 });
 
 bot.onText(/\/today/, msg => {
@@ -148,7 +154,7 @@ ${count}. ${subject.name} - ${application.lessonType[subject.type]}
 async function queryToDB(odd, weekdayName, isWeekSchedule = false) {
   const client = await MongoClient.connect(urlConnect);
   const db = client.db(dbName);
-  const resultDocument = await db.collection('groups').findOne({ groupName: "БСТ1902" });
+  const resultDocument = await db.collection('Groups').findOne({ groupName: "БСТ1902" });
 
   client.close();
 
@@ -172,19 +178,18 @@ async function getTimetable(date) {
 }
 
 async function getTimetableForWeek(date) {
-  
+
   const odd = isEvenWeek(date);
   const scheduleArray = await queryToDB(odd, 0, true);
-  
+
   let msgAnswerText = ``;
   let dayCount = 1;
 
   for (let day in scheduleArray) {
     let count = 1;
     msgAnswerText += `${application.calendar.weekday[dayCount]} =>`;
-    
+
     for (let subject of scheduleArray[day]) {
-      console.log(subject);
       msgAnswerText += msgLayout(subject, count);
       count++;
     }
