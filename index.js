@@ -13,10 +13,19 @@ const urlConnect = 'mongodb+srv://administrator:,fpflfyys[@cluster0.paq35.mongod
 /* Commands */
 bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id;
+
   bot.sendPhoto(chatId, 'src/img/start-screen.png', {
     caption: `
-      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов МТУСИ о расписании занятий.\n\nПожалуйста, впишите название своей группы.`
+      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов МТУСИ о расписании занятий.\n\nПожалуйста, введите название своей группы.`
   });
+
+  bot.on("message", (msg) => {
+    schedule.groupName = msg.text;
+
+    bot.sendMessage(chatId, `Вы из группы ${msg.text}`,);
+    bot.removeListener("message");
+  });
+
 });
 
 bot.onText(/\/dashboard/, msg => {
@@ -26,21 +35,6 @@ bot.onText(/\/dashboard/, msg => {
       inline_keyboard: keyboards.scheduleKeyboard
     }
   })
-});
-
-bot.onText(/\/today/, msg => {
-  const chatId = msg.chat.id;
-  schedule.today(chatId);
-});
-
-bot.onText(/\/tomorrow/, msg => {
-  const chatId = msg.chat.id;
-  schedule.tomorrow(chatId);
-});
-
-bot.onText(/\/week/, msg => {
-  const chatId = msg.chat.id;
-  schedule.week(chatId);
 });
 
 bot.on('callback_query', (query) => {
@@ -61,6 +55,8 @@ bot.on('callback_query', (query) => {
 
 /* Schedule object */
 const schedule = {
+  groupName: '',
+
   today: async function (id) {
     const date = new Date();
 
@@ -70,7 +66,8 @@ const schedule = {
       const month = application.calendar.month[date.getMonth()];
 
       bot.sendMessage(id, `
-\u{1F4C6} Расписание на сегодня (${day} ${month}, ${weekday}) для группы БСТ1902
+\u{1F4C6} Расписание на сегодня (${day} ${month}, ${weekday})
+Группа: БСТ1902
 ${await getTimetable(date)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
@@ -87,7 +84,8 @@ ${await getTimetable(date)}`);
       const month = application.calendar.month[tomorrowDate.getMonth()];
 
       bot.sendMessage(id, `
-\u{1F4C6} Расписание на завтра (${day} ${month}, ${weekday}) для группы БСТ1902
+\u{1F4C6} Расписание на завтра (${day} ${month}, ${weekday})
+Группа: БСТ1902
 ${await getTimetable(tomorrowDate)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
@@ -98,7 +96,8 @@ ${await getTimetable(tomorrowDate)}`);
     const date = new Date();
 
     bot.sendMessage(id, `
-\u{1F4C6} Расписание на неделю:
+\u{1F4C6} Расписание на неделю
+Группа: БСТ1902
 ${await getTimetableForWeek(date)}`);
   }
 };
@@ -140,12 +139,19 @@ function isEvenWeek(date) {
 }
 
 function msgLayout(subject, count) {
+  const name = subject.name ? subject.name : "-",
+        type = subject.type ? subject.type : "-",
+        number = subject.number,
+        classroom = subject.classroom ? subject.classroom : "-",
+        author = subject.author ? subject.author : "-";
+
   let msg =
     `------------------------------------------------
-${count}. ${subject.name} - ${application.lessonType[subject.type]}
-\u{1F55C} ${application.intervals[subject.number]}
-\u{1F3DB} ${subject.classroom}
-\u{1F468} ${subject.author}
+${count}. ${name}
+${application.lessonType[type]}
+Время: ${application.intervals[number]}
+Аудитория: ${classroom}
+Преподаватель: ${author}
 `;
 
   return msg
@@ -187,7 +193,7 @@ async function getTimetableForWeek(date) {
 
   for (let day in scheduleArray) {
     let count = 1;
-    msgAnswerText += `${application.calendar.weekday[dayCount]} =>`;
+    msgAnswerText += `\n******${application.calendar.weekday[dayCount]}******\n`;
 
     for (let subject of scheduleArray[day]) {
       msgAnswerText += msgLayout(subject, count);
@@ -200,3 +206,6 @@ async function getTimetableForWeek(date) {
   return msgAnswerText
 }
 
+function deleteListener(event) {
+  bot.removeListener(event);
+}
