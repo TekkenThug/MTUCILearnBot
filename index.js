@@ -40,7 +40,11 @@ bot.onText(/\/dashboard/, msg => {
 bot.onText(/\/options/, msg => {
   const chatId = msg.chat.id;
   
-  bot.sendMessage(chatId, `Выбранная группа ${schedule.groupName}`);
+  bot.sendMessage(chatId, `Настройки`, {
+    reply_markup: {
+      inline_keyboard: keyboards.optionsKeyboard
+    }
+  });
 });
 
 bot.on('callback_query', (query) => {
@@ -57,11 +61,24 @@ bot.on('callback_query', (query) => {
   if (query.data === 'week') {
     schedule.week(chatId);
   }
+
+  if (query.data === "changeGroup") {
+    bot.sendMessage(chatId, "Раздел в доработке")
+  }
+
+  if (query.data === "feedback") {
+    bot.sendMessage(chatId, "Напишите отзыв о боте, ваши пожелания или недочеты. Автор проекта обязательно их увидит :)")
+    
+    bot.on("message", (msg) => {
+      bot.sendMessage(440762160, `${msg.text}`);
+      bot.removeListener("message")
+    })
+  }
 });
 
 /* Schedule object */
 const schedule = {
-  groupName: '',
+  groupName: 'БСТ1902',
 
   today: async function (id) {
     const date = new Date();
