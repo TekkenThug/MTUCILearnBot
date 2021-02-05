@@ -19,4 +19,20 @@ const keyboardOfSchedule = [
   ]
 ];
 
+const keyboardsOfOptions = [
+  [
+    {
+      text: '\u{1F504} Сменить группу',
+      callback_data: 'changeGroup'
+    }
+  ],
+  [
+    {
+      text: '\u{1F48C} Оставить фидбэк',
+      callback_data: 'feedback'
+    }
+  ]
+]
+
 module.exports.scheduleKeyboard = keyboardOfSchedule;
+module.exports.optionsKeyboard = keyboardsOfOptions;
