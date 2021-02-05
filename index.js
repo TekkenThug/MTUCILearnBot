@@ -37,6 +37,12 @@ bot.onText(/\/dashboard/, msg => {
   })
 });
 
+bot.onText(/\/options/, msg => {
+  const chatId = msg.chat.id;
+  
+  bot.sendMessage(chatId, `Выбранная группа ${schedule.groupName}`);
+});
+
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id;
 
@@ -206,6 +212,3 @@ async function getTimetableForWeek(date) {
   return msgAnswerText
 }
 
-function deleteListener(event) {
-  bot.removeListener(event);
-}
