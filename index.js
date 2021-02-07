@@ -46,19 +46,22 @@ bot.onText(/\/options/, msg => {
   });
 });
 
-bot.on('callback_query', (query) => {
+bot.on('callback_query', async (query) => {
   const chatId = query.message.chat.id;
 
   if (query.data === 'today') {
-    schedule.today(chatId);
+    const group = await getGroupForUser(query.from.id);
+    schedule.today(chatId, group);
   }
 
   if (query.data === 'tomorrow') {
-    schedule.tomorrow(chatId);
+    const group = await getGroupForUser(query.from.id);
+    schedule.tomorrow(chatId, group);
   }
 
   if (query.data === 'week') {
-    schedule.week(chatId);
+    const group = await getGroupForUser(query.from.id);
+    schedule.week(chatId, group);
   }
 
   if (query.data === "changeGroup") {
@@ -83,9 +86,7 @@ bot.on('callback_query', (query) => {
 
 /* Schedule object */
 const schedule = {
-  groupName: 'БСТ1902',
-
-  today: async function (id) {
+  today: async function (id, group) {
     const date = new Date();
 
     if (validateDate(date)) {
@@ -96,13 +97,13 @@ const schedule = {
       bot.sendMessage(id, `
 \u{1F4C6} Расписание на сегодня (${day} ${month}, ${weekday})
 Группа: БСТ1902
-${await getTimetable(date)}`);
+${await getTimetable(date, group)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
     }
   },
 
-  tomorrow: async function (id) {
+  tomorrow: async function (id, group) {
     const todayDate = new Date();
     const tomorrowDate = new Date(todayDate.getTime() + (24 * 60 * 60 * 1000));
 
@@ -114,19 +115,19 @@ ${await getTimetable(date)}`);
       bot.sendMessage(id, `
 \u{1F4C6} Расписание на завтра (${day} ${month}, ${weekday})
 Группа: БСТ1902
-${await getTimetable(tomorrowDate)}`);
+${await getTimetable(tomorrowDate, group)}`);
     } else {
       bot.sendMessage(id, `На этот день нет расписания \u{1F60E}`);
     }
   },
 
-  week: async function (id) {
+  week: async function (id, group) {
     const date = new Date();
 
     bot.sendMessage(id, `
 \u{1F4C6} Расписание на неделю
 Группа: БСТ1902
-${await getTimetableForWeek(date)}`);
+${await getTimetableForWeek(date, group)}`);
   }
 };
 
@@ -149,12 +150,10 @@ function isEvenWeek(date) {
 
   if (startDay <= 4) {
     difference++;
-    //console.log(difference)
   }
 
   if (date.getDay() == 1) {
     difference++;
-    //console.log(difference)
   }
 
   difference % 2 ? odd = true : odd = false;
@@ -185,20 +184,20 @@ ${application.lessonType[type]}
   return msg
 }
 
-async function queryToDB(odd, weekdayName, isWeekSchedule = false) {
+async function queryToDB(group, odd, weekdayName, isWeekSchedule = false) {
   const client = await MongoClient.connect(urlConnect);
   const db = client.db(dbName);
-  const resultDocument = await db.collection('Groups').findOne({ groupName: "БСТ1902" });
+  const resultDocument = await db.collection('Groups').findOne({ groupName: group});
 
   client.close();
 
   return !isWeekSchedule ? resultDocument[odd][weekdayName] : resultDocument[odd];
 }
 
-async function getTimetable(date) {
+async function getTimetable(date, group) {
   const odd = isEvenWeek(date);
   const weekdayName = application.weekdayName[date.getDay()];
-  const scheduleDayArray = await queryToDB(odd, weekdayName);
+  const scheduleDayArray = await queryToDB(group, odd, weekdayName);
 
   let msgAnswerText = ``;
   let count = 1;
@@ -211,10 +210,10 @@ async function getTimetable(date) {
   return msgAnswerText
 }
 
-async function getTimetableForWeek(date) {
+async function getTimetableForWeek(date, group) {
 
   const odd = isEvenWeek(date);
-  const scheduleArray = await queryToDB(odd, 0, true);
+  const scheduleArray = await queryToDB(group, odd, 0, true);
 
   let msgAnswerText = ``;
   let dayCount = 1;
@@ -253,4 +252,14 @@ async function setGroupForUser(id, group) {
     }
   }
 }
+
+async function getGroupForUser(id) {
+  const client = await MongoClient.connect(urlConnect);
+  const db = client.db(dbName);
+  const group = await db.collection('Users').findOne({ userId: id });
+  
+  return group.groupName;
+}
+
+
 
