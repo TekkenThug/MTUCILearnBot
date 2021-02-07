@@ -16,13 +16,12 @@ bot.onText(/\/start/, msg => {
 
   bot.sendPhoto(chatId, 'src/img/start-screen.png', {
     caption: `
-      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов МТУСИ о расписании занятий.\n\nПожалуйста, введите название своей группы.`
+      Добро пожаловать в MTUCILearnBot!\n\nБот предназначен для информирования студентов МТУСИ о расписании занятий.\n\nПожалуйста, введите название своей группы в формате БСТ1902.`
   });
 
-  bot.on("message", (msg) => {
-    schedule.groupName = msg.text;
+  bot.on("message", async (msg) => {
+    await setGroupForUser(msg.from.id, msg.text);
 
-    bot.sendMessage(chatId, `Вы из группы ${msg.text}`,);
     bot.removeListener("message");
   });
 
@@ -39,7 +38,7 @@ bot.onText(/\/dashboard/, msg => {
 
 bot.onText(/\/options/, msg => {
   const chatId = msg.chat.id;
-  
+
   bot.sendMessage(chatId, `Настройки`, {
     reply_markup: {
       inline_keyboard: keyboards.optionsKeyboard
@@ -63,12 +62,18 @@ bot.on('callback_query', (query) => {
   }
 
   if (query.data === "changeGroup") {
-    bot.sendMessage(chatId, "Раздел в доработке")
+    bot.sendMessage(chatId, "Введите новую группу в формате БСТ1902");
+
+    bot.on("message", async (msg) => {
+      await setGroupForUser(msg.from.id, msg.text);
+
+      bot.removeListener("message");
+    });
   }
 
   if (query.data === "feedback") {
     bot.sendMessage(chatId, "Напишите отзыв о боте, ваши пожелания или недочеты. Автор проекта обязательно их увидит :)")
-    
+
     bot.on("message", (msg) => {
       bot.sendMessage(440762160, `${msg.text}`);
       bot.removeListener("message")
@@ -163,10 +168,10 @@ function isEvenWeek(date) {
 
 function msgLayout(subject, count) {
   const name = subject.name ? subject.name : "-",
-        type = subject.type ? subject.type : "-",
-        number = subject.number,
-        classroom = subject.classroom ? subject.classroom : "-",
-        author = subject.author ? subject.author : "-";
+    type = subject.type ? subject.type : "-",
+    number = subject.number,
+    classroom = subject.classroom ? subject.classroom : "-",
+    author = subject.author ? subject.author : "-";
 
   let msg =
     `------------------------------------------------
@@ -227,5 +232,25 @@ async function getTimetableForWeek(date) {
   }
 
   return msgAnswerText
+}
+
+async function setGroupForUser(id, group) {
+  const client = await MongoClient.connect(urlConnect);
+  const db = client.db(dbName);
+  const validGroup = await db.collection('Groups').findOne({ groupName: group });
+
+  if (!validGroup) {
+    console.log("Такой группы увы нет в базе :(");
+  } else {
+    const result = await db.collection('Users').findOne({ userId: id });
+
+    if (!result) {
+      const insert = await db.collection('Users').insertOne({ userId: id, groupName: group });
+      console.log(`Запись добавлена`);
+    } else {
+      const update = await db.collection('Users').updateOne({ userId: id }, { $set: { "groupName": group } });
+      console.log(`Запись обновлена`);
+    }
+  }
 }
 
