@@ -20,7 +20,7 @@ bot.onText(/\/start/, msg => {
   });
 
   bot.on("message", async (msg) => {
-    await setGroupForUser(msg.from.id, msg.text);
+    await setGroupForUser(chatId, msg.from.id, msg.text);
 
     bot.removeListener("message");
   });
@@ -68,7 +68,7 @@ bot.on('callback_query', async (query) => {
     bot.sendMessage(chatId, "Введите новую группу в формате БСТ1902");
 
     bot.on("message", async (msg) => {
-      await setGroupForUser(msg.from.id, msg.text);
+      await setGroupForUser(chatId, msg.from.id, msg.text);
 
       bot.removeListener("message");
     });
@@ -132,6 +132,7 @@ ${await getTimetableForWeek(date, group)}`);
 };
 
 /* Functions */
+
 function validateDate(date) {
   if (date.getDay() == 0 || date.getDay() == 6) {
     return false;
@@ -233,30 +234,34 @@ async function getTimetableForWeek(date, group) {
   return msgAnswerText
 }
 
-async function setGroupForUser(id, group) {
+async function setGroupForUser(chatId, id, group) {
   const client = await MongoClient.connect(urlConnect);
   const db = client.db(dbName);
   const validGroup = await db.collection('Groups').findOne({ groupName: group });
 
   if (!validGroup) {
-    console.log("Такой группы увы нет в базе :(");
+    bot.sendMessage(chatId, "Такой группы, к сожалению, нет в базе :(")
   } else {
     const result = await db.collection('Users').findOne({ userId: id });
 
     if (!result) {
       const insert = await db.collection('Users').insertOne({ userId: id, groupName: group });
-      console.log(`Запись добавлена`);
+      bot.sendMessage(chatId, "Группа успешно обновлена!")
     } else {
       const update = await db.collection('Users').updateOne({ userId: id }, { $set: { "groupName": group } });
-      console.log(`Запись обновлена`);
+      bot.sendMessage(chatId, "Группа успешно обновлена!")
     }
   }
+
+  client.close();
 }
 
 async function getGroupForUser(id) {
   const client = await MongoClient.connect(urlConnect);
   const db = client.db(dbName);
   const group = await db.collection('Users').findOne({ userId: id });
+
+  client.close();
   
   return group.groupName;
 }
