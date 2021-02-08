@@ -144,20 +144,12 @@ function validateDate(date) {
 function isEvenWeek(date) {
   let odd = false;
 
-  const startDate = new Date(date.getFullYear(), 0, 1);
-  const startDay = startDate.getDay();
+  const startDate = new Date(2021, 1, 1);
+  const variableWeek = 7 * 24 * 60 * 60 * 1000;
 
-  let difference = Math.round((date - startDate) / (1000 * 60 * 60 * 24 * 7));
+  const diff = Math.floor((date.getTime() - startDate.getTime()) / variableWeek)
 
-  if (startDay <= 4) {
-    difference++;
-  }
-
-  if (date.getDay() == 1) {
-    difference++;
-  }
-
-  difference % 2 ? odd = true : odd = false;
+  diff % 2 ? odd = false : odd = true;
 
   if (odd) {
     return "odd"
