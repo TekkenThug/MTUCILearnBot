@@ -7,7 +7,7 @@ const keyboards = require('./src/js/keyboards.js');
 
 const MongoClient = require('mongodb').MongoClient;               
 const dbName = require('./src/js/mongo.js').dbName;
-const urlConnect = require('./src/js/mongo.jd').urlConnect;
+const urlConnect = require('./src/js/mongo.js').urlConnect;
 
 
 /* Commands */
