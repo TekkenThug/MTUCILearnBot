@@ -1,13 +1,13 @@
-const TelegramBot = require('node-telegram-bot-api');               // Подключение модуля Telegram
-const token = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';     // Токен
-const bot = new TelegramBot(token, { polling: true });              // Экземпляр модуля
+const TelegramBot = require('node-telegram-bot-api');          
+const token = '1608798236:AAHDzQWo8Qw9qAmKBdSkSEDjl2mz-NKdDKY';    
+const bot = new TelegramBot(token, { polling: true });      
 
-const application = require('./src/js/app-data.js');                // Данные для приложения
-const keyboards = require('./src/js/keyboards.js');                 // Клавиатуры
+const application = require('./src/js/app-data.js');          
+const keyboards = require('./src/js/keyboards.js');         
 
-const MongoClient = require('mongodb').MongoClient;                 // Связь с клиентом MongoDb
-const dbName = "Schedule";                                          // Имя БД
-const urlConnect = 'mongodb+srv://administrator:,fpflfyys[@cluster0.paq35.mongodb.net/Schedule';                    // Адрес подключения
+const MongoClient = require('mongodb').MongoClient;               
+const dbName = require('./src/js/mongo.js').dbName;
+const urlConnect = require('./src/js/mongo.jd').urlConnect;
 
 
 /* Commands */
