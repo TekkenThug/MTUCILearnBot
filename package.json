@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "mongodb": "^3.6.3",
-    "node-telegram-bot-api": "^0.51.0",
+    "node-telegram-bot-api": "^0.51.0"
   }
 }
