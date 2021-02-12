@@ -196,7 +196,6 @@ async function getTimetable(date, group) {
 
   for (let subject in scheduleDayArray) {
     if (scheduleDayArray[subject]['name'] !== "") {
-      console.log(scheduleDayArray[subject]);
       msgAnswerText += msgLayout(scheduleDayArray[subject], subject, count);
       count++;
     }
@@ -214,12 +213,15 @@ async function getTimetableForWeek(date, group) {
   let dayCount = 1;
 
   for (let day in scheduleArray) {
+    
     let count = 1;
     msgAnswerText += `\n******${application.calendar.weekday[dayCount]}******\n`;
 
-    for (let subject of scheduleArray[day]) {
-      msgAnswerText += msgLayout(subject, count);
-      count++;
+    for (let subject in scheduleArray[day]) {
+      if (scheduleArray[day][subject]['name'] !== "") {
+        msgAnswerText += msgLayout(scheduleArray[day][subject], subject, count);
+        count++;
+      }
     }
 
     dayCount++;
