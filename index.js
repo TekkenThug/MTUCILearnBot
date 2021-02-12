@@ -158,10 +158,9 @@ function isEvenWeek(date) {
   }
 }
 
-function msgLayout(subject, count) {
+function msgLayout(subject, number, count) {
   const name = subject.name ? subject.name : "-",
     type = subject.type ? subject.type : "-",
-    number = subject.number,
     classroom = subject.classroom ? subject.classroom : "-",
     author = subject.author ? subject.author : "-";
 
@@ -195,9 +194,12 @@ async function getTimetable(date, group) {
   let msgAnswerText = ``;
   let count = 1;
 
-  for (let subject of scheduleDayArray) {
-    msgAnswerText += msgLayout(subject, count);
-    count++;
+  for (let subject in scheduleDayArray) {
+    if (scheduleDayArray[subject]['name'] !== "") {
+      console.log(scheduleDayArray[subject]);
+      msgAnswerText += msgLayout(scheduleDayArray[subject], subject, count);
+      count++;
+    }
   }
 
   return msgAnswerText
