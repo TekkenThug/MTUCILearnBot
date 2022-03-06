@@ -22,7 +22,7 @@ const startHandler = async (ctx: Context) => {
  * @param ctx
  */
 const scheduleHandler = async (ctx: Context) => {
-  await ctx.reply(scheduleTitle() as string, scheduleKeyboard);
+  await ctx.reply(scheduleTitle, scheduleKeyboard);
 };
 
 /**
@@ -30,7 +30,7 @@ const scheduleHandler = async (ctx: Context) => {
  * @param ctx
  */
 const optionsHandler = async (ctx: Context) => {
-  await ctx.reply(optionsTitle() as string, optionKeyboard);
+  await ctx.reply(optionsTitle, optionKeyboard);
 };
 
 export default [
