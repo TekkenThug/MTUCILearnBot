@@ -1,5 +1,5 @@
 import { ExtraPhoto } from 'telegraf/typings/telegram-types';
-import { Lesson } from '@/types/global';
+import { Lesson } from '@/types/schedule';
 import { daySchedule } from './layouts';
 
 /**

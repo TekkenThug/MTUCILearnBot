@@ -1,5 +1,5 @@
 import dedent from 'dedent-js';
-import { Lesson } from '@/types/global';
+import { Lesson } from '@/types/schedule';
 
 /**
  * Hello message
