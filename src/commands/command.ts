@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import * as msg from '@/views/layouts';
+import { helloMessage, scheduleTitle, optionsTitle } from '@/views/layouts';
 import { createCaption } from '@/views/view';
 import optionKeyboard from '@/keyboards/optionKeyboard';
 import scheduleKeyboard from '@/keyboards/scheduleKeyboard';
@@ -12,7 +12,7 @@ import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
 const startHandler = async (ctx: Context) => {
   await ctx.replyWithPhoto({
     source: 'src/assets/images/start-screen.png'
-  }, createCaption(msg.helloMessage() as string));
+  }, createCaption(helloMessage() as string));
 
   await ctx.reply('Выбор', await groupKeyboard());
 };
@@ -22,7 +22,7 @@ const startHandler = async (ctx: Context) => {
  * @param ctx
  */
 const scheduleHandler = async (ctx: Context) => {
-  await ctx.reply(msg.scheduleTitle() as string, scheduleKeyboard);
+  await ctx.reply(scheduleTitle() as string, scheduleKeyboard);
 };
 
 /**
@@ -30,7 +30,7 @@ const scheduleHandler = async (ctx: Context) => {
  * @param ctx
  */
 const optionsHandler = async (ctx: Context) => {
-  await ctx.reply(msg.optionsTitle() as string, optionKeyboard);
+  await ctx.reply(optionsTitle() as string, optionKeyboard);
 };
 
 export default [
