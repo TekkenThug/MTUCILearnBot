@@ -1,0 +1,21 @@
+{
+  "env": {
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "ignorePatterns": ["webpack.config.js"],
+  "extends": [
+    "standard",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "semi": [2, "always"],
+    "semi-style": ["error", "last"],
+    "camelcase": 0,
+    "quotes": [1, "single", {
+      "avoidEscape":  true,
+      "allowTemplateLiterals": true
+    }]
+  }
+}
