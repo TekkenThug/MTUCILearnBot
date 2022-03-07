@@ -6,7 +6,6 @@
   "scripts": {
     "watch": "webpack --watch --progress",
     "build": "NODE_ENV=production webpack",
-    "worker-crawler": "ts-node ./src/workers/Crawler/index.ts"
   },
   "keywords": [],
   "author": "",
