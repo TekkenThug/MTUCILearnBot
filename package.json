@@ -5,7 +5,7 @@
   "main": "./dist/app.js",
   "scripts": {
     "watch": "webpack --watch --progress",
-    "build": "NODE_ENV=production webpack",
+    "build": "NODE_ENV=production webpack"
   },
   "keywords": [],
   "author": "",
