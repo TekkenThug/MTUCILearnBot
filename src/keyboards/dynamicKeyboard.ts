@@ -1,8 +1,8 @@
 import { Markup } from 'telegraf';
-import Group from '@/models/group';
+import { getGroups } from '@/services/api';
 
 export const groupKeyboard = async () => {
-  const groups = await Group.find({}).sort('name').limit(6);
+  const groups = await getGroups();
 
   const arr: ReturnType<typeof Markup.button.callback>[][] = [[], []];
 
