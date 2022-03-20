@@ -2,11 +2,9 @@ import weekdays from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import 'dayjs/locale/ru';
 import dayjs, { Dayjs } from 'dayjs';
-import { isHoliday, isEvenWeek, LessonsType } from '@/utils';
-import User from '@/models/user';
-import Schedule from '@/models/schedule';
-import Time from '@/models/time';
-import { Lesson, ScheduleTime } from '@/types/schedule';
+import { isEvenWeek, LessonsType } from '@/utils';
+import { getTimes, getSchedule as getScheduleFromAPI } from './api';
+import { ScheduleTime } from '@/types/schedule';
 
 dayjs.extend(weekdays);
 dayjs.extend(weekOfYear);
@@ -34,19 +32,27 @@ const getDateByTime = (time: ScheduleTime): Dayjs => {
 export const getSchedule = async (userID: number, time: ScheduleTime) => {
   const workDate = getDateByTime(time);
 
-  if (isHoliday(workDate)) return 'Это выходной!';
-
-  const scheduleRecord = await Schedule.findOne({
-    group: await User.findOne({ userID }).distinct('group')
-  }).select('schedule');
-
-  const schedule = scheduleRecord.schedule[isEvenWeek(workDate) ? 'even' : 'odd'][workDate.weekday()].lessons as Array<Lesson>;
-  const timeDict = await Time.find({});
-
-  schedule.forEach((item) => {
-    item.time = timeDict.find(time => time.number === item.number).time;
-    (item.type as string) = LessonsType[item.type];
+  const schedule = await getScheduleFromAPI({
+    even: isEvenWeek(workDate) ? 'even' : 'odd',
+    weekday: workDate.weekday(),
+    userID,
   });
 
+  if (!Array.isArray(schedule)) {
+      return schedule.status === 'HOLIDAY' ? 'Это выходной!' : 'Извините, расписание отсутствует :('
+  }
+
+  const timeDict = await getTimes();
+
+  schedule.forEach((item) => {
+    const targetTime = timeDict.find(time => time.number === item.number);
+
+    if (targetTime) {
+      item.time = targetTime.time;
+    }
+
+    (item.type as string) = LessonsType[item.type];
+  });
+  
   return schedule;
 };
