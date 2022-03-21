@@ -1,10 +1,6 @@
-import { Group, Time } from "@/types/api";
+import { Group, Time, ServiceResponse } from "@/types/api";
 import { Lesson } from "@/types/schedule";
 import axios from "axios";
-
-export interface ServiceResponse {
-  status: string;
-}
 
 const API = axios.create({
   baseURL: `${process.env.DEV_SERVER_URL}/api`,
