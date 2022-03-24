@@ -6,15 +6,20 @@ Telegram bot for MTUCILearn
 
 ## Features
 
-- 🔎 Searching neccessary schedule for today/tomorrow and for target educational group
+- 🔎 Searching necessary schedule for today/tomorrow and for target educational group
 - 📧 Sending feedback to application author
 
 ## Changelog
 
+#### v0.4.0
+- `Added` - Add pagination for group selecting
+- `Fixed` - Fix feedback link
+- `Fixed` - Fix README errors
+
 #### v0.3.0
 - `Added` - Select educational group
 - `Added` - Send feedback to application author
-- `Added` - Get schedule for today/tommorow
+- `Added` - Get schedule for today/tomorrow
 ## Roadmap
 
 - To be continue...
@@ -31,7 +36,7 @@ npm install
 Start the watcher (for development)
 
 ```bash
-npm run watch
+npm run dev
 ```
 
 Make production build
@@ -50,8 +55,9 @@ npm run build
 │   └─images   // Images
 ├─commands     // Command handlers (replies, button handlers and etc.)
 ├─keyboards    // Kit of Keyboards
-├─services     // Bot provided services
+├─providers    // Bot providers
+├─services     // Bot services
 │   └─api      // Requests to API  
 ├─types        // TypeScript types   
-└─views        // Views for Bot reponses
+└─views        // Bot response views
 ```
