@@ -3,6 +3,9 @@
   "version": "0.4.0",
   "description": "Telegram bot for MTUCILearn",
   "main": "./dist/app.js",
+  "engines": {
+    "node": "14.16.0"
+  },
   "scripts": {
     "dev": "webpack --watch --progress",
     "build": "cross-env NODE_ENV=production webpack",
