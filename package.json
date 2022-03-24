@@ -5,7 +5,8 @@
   "main": "./dist/app.js",
   "scripts": {
     "dev": "webpack --watch --progress",
-    "build": "cross-env NODE_ENV=production webpack"
+    "build": "cross-env NODE_ENV=production webpack",
+    "start": "node ./dist/app.js"
   },
   "keywords": [],
   "author": "",
