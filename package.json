@@ -34,7 +34,6 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.10.7",
     "dedent-js": "^1.0.1",
-    "dotenv": "^10.0.0",
     "dotenv-webpack": "^7.0.3",
     "mime-types": "^2.1.34",
     "mongoose": "^6.0.13",
