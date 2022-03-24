@@ -3,7 +3,7 @@ import { helloMessage, scheduleTitle, optionsTitle } from '@/views/layouts';
 import { createCaption } from '@/views/view';
 import optionKeyboard from '@/keyboards/optionKeyboard';
 import scheduleKeyboard from '@/keyboards/scheduleKeyboard';
-import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
+import groupKeyboard from '@/keyboards/groupKeyboard';
 
 /**
  * Starting bot command
