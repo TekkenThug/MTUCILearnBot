@@ -6,8 +6,6 @@ import queryProvider from '@/providers';
 
 const Bot = new Telegraf<CustomContext>(process.env.TG_TOKEN as string);
 
-console.log(process.env.MONGO_URL);
-
 /** Bot launching */
 mongoose.connect(process.env.MONGO_URL as string)
   .then(() => console.log('MongoDB is connected'))
