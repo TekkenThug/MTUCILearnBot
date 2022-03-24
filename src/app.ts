@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Telegraf } from 'telegraf';
 import { CustomContext } from '@/types/global';
 import commands from '@/commands/command';
-import queryProvider from '@/services/queryProvider';
+import queryProvider from '@/providers';
 
 const Bot = new Telegraf<CustomContext>(process.env.TG_TOKEN as string);
 
