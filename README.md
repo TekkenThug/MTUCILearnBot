@@ -50,6 +50,7 @@ npm run build
 
 ```bash
 ├─app.ts       // App entry point
+├─config.ts    // App config
 ├─utils.ts     // Different util functions
 ├─assets       // Media assets
 │   └─images   // Images
