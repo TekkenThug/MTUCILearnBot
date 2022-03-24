@@ -18,7 +18,7 @@ export interface Lesson {
   /** Lesson time (start and end) */
   time: string;
 
-  /** Cabinet number where lesson is teach */
+  /** Cabinet number where lesson is taught */
   cabinet: string;
 
   /** Teacher name */
