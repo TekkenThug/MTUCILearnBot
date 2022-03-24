@@ -1,6 +1,6 @@
 export interface ServiceResponse {
   /** Status code */
-  status: string;
+  status: 'EMPTY' | 'HOLIDAY';
 }
 
 export interface Group {
