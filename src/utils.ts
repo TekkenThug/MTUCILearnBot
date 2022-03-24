@@ -5,13 +5,6 @@ interface DateWorker {
   (date: Dayjs): boolean
 }
 
-/** Lessons type for view */
-export enum LessonsType {
-  Lecture = 'Лекция',
-  Laboratory = 'Лабораторная',
-  Practice = 'Практика'
-}
-
 /**
  * Parse string into
  * @param source - Source string

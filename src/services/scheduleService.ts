@@ -2,9 +2,9 @@ import weekdays from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import 'dayjs/locale/ru';
 import dayjs, { Dayjs } from 'dayjs';
-import { isEvenWeek, LessonsType } from '@/utils';
+import { isEvenWeek } from '@/utils';
 import { getTimes, getSchedule as getScheduleFromAPI } from './api';
-import { ScheduleTime } from '@/types/schedule';
+import { ScheduleTime, LessonsSet } from '@/types/schedule';
 
 dayjs.extend(weekdays);
 dayjs.extend(weekOfYear);
@@ -51,7 +51,7 @@ export const getSchedule = async (userID: number, time: ScheduleTime) => {
       item.time = targetTime.time;
     }
 
-    (item.type as string) = LessonsType[item.type];
+    (item.type as string) = LessonsSet[item.type];
   });
 
   return schedule;
