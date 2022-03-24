@@ -1,9 +1,9 @@
-import { setGroup } from './groupService';
+import { setGroup } from '@/services/groupService';
 import { CustomContext } from '@/types/global';
 import { ScheduleTime } from '@/types/schedule';
 import { parseParameters } from '@/utils';
 import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
-import { getSchedule } from './scheduleService';
+import { getSchedule } from '@/services/scheduleService';
 import { scheduleView } from '@/views/view';
 
 interface QueryProviderOptions {
