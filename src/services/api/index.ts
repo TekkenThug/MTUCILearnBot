@@ -1,35 +1,35 @@
-import { Group, Time, ServiceResponse } from "@/types/api";
-import { Lesson } from "@/types/schedule";
-import axios from "axios";
+import { Group, Time, ServiceResponse } from '@/types/api';
+import { Lesson } from '@/types/schedule';
+import axios from 'axios';
 
 const API = axios.create({
-  baseURL: `${process.env.DEV_SERVER_URL}/api`,
+  baseURL: `${process.env.DEV_SERVER_URL}/api`
 });
 
 /** Get groups list */
-export const getGroups = () =>
-  API.get<Group[]>("/group").then((response) => response.data);
+export const getGroups = (page = 1, limit = 0) =>
+  API.get<Group[]>('/group', { params: { page, limit } }).then((response) => response.data);
 
 /** Get times list */
 export const getTimes = () =>
-  API.get<Time[]>("/time").then((response) => response.data);
+  API.get<Time[]>('/time').then((response) => response.data);
 
 /** Get schedule */
 export const getSchedule = ({
   even,
   weekday,
-  userID,
+  userID
 }: {
-  even: "odd" | "even";
+  even: 'odd' | 'even';
   weekday: number;
   userID: number;
 }) => {
-  return API.get<Lesson[] | ServiceResponse>("/schedule", {
+  return API.get<Lesson[] | ServiceResponse>('/schedule', {
     params: {
       even,
       weekday,
-      userID,
-    },
+      userID
+    }
   }).then((response) => response.data);
 };
 
@@ -37,7 +37,7 @@ export const getSchedule = ({
 export const updateUserGroup = (group: string, userID: number) => {
   return API.patch<string>(`/user/${userID}`, {
     params: {
-      group,
-    },
+      group
+    }
   }).then((response) => response.data);
 };

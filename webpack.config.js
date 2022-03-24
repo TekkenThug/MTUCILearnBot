@@ -2,6 +2,7 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const NodeExternals = require('webpack-node-externals');
 const NodemonPlugin = require('nodemon-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -29,6 +30,9 @@ module.exports = {
   },
   plugins: [
     new Dotenv(),
-    new NodemonPlugin()
+    new NodemonPlugin(),
+    new webpack.ProvidePlugin({
+      config: [path.resolve(path.join(__dirname, 'src/config.ts')), 'default'],
+    })
   ]
 };

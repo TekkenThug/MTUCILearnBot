@@ -1,9 +1,9 @@
-import { setGroup } from './groupService';
+import { setGroup } from '@/services/groupService';
 import { CustomContext } from '@/types/global';
 import { ScheduleTime } from '@/types/schedule';
 import { parseParameters } from '@/utils';
-import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
-import { getSchedule } from './scheduleService';
+import groupKeyboard from '@/keyboards/groupKeyboard';
+import { getSchedule } from '@/services/scheduleService';
 import { scheduleView } from '@/views/view';
 
 interface QueryProviderOptions {
@@ -41,10 +41,18 @@ const queryProvider: QueryProviderFunction = (ctx, callback, options) => {
  * @param ctx
  */
 const setGroupAction = async (ctx: CustomContext) => {
-  queryProvider(ctx, (ctx) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return setGroup(ctx.callbackQuery.from.id, parseParameters(ctx.match.input) as string);
+  queryProvider(ctx, async (ctx) => {
+    const params = parseParameters(ctx.match.input, false);
+
+    if (params[0] === 'right') {
+      await ctx.reply('Выбор', await groupKeyboard(+params[1] + 1));
+    } else if (params[0] === 'left') {
+      await ctx.reply('Выбор', await groupKeyboard(+params[1] - 1));
+    } else {
+      if (ctx.callbackQuery) {
+        return setGroup(ctx.callbackQuery.from.id, params[0]);
+      }
+    }
   }, {
     answerText: 'Группа успешно настроена!',
     deleteMessageAfterSend: true
@@ -72,15 +80,15 @@ const optionsAction = async (ctx: CustomContext) => {
  * @param ctx
  */
 const scheduleAction = async (ctx: CustomContext) => {
-  queryProvider(ctx, (ctx) => {
+  queryProvider(ctx, async (ctx) => {
     const selectedOption = parseParameters(ctx.match.input);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return getSchedule(ctx.callbackQuery.from.id, selectedOption as ScheduleTime)
-      .then((schedule) => {
-        ctx.reply(typeof schedule === 'string' ? schedule : scheduleView(schedule), { parse_mode: 'HTML' });
-      });
+    if (ctx.callbackQuery) {
+      return getSchedule(ctx.callbackQuery.from.id, selectedOption as ScheduleTime)
+        .then((schedule) => {
+          ctx.reply(typeof schedule === 'string' ? schedule : scheduleView(schedule), { parse_mode: 'HTML' });
+        });
+    }
   }, {
     deleteMessageAfterSend: true
   });

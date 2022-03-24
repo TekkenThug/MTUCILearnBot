@@ -3,7 +3,7 @@ import { helloMessage, scheduleTitle, optionsTitle } from '@/views/layouts';
 import { createCaption } from '@/views/view';
 import optionKeyboard from '@/keyboards/optionKeyboard';
 import scheduleKeyboard from '@/keyboards/scheduleKeyboard';
-import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
+import groupKeyboard from '@/keyboards/groupKeyboard';
 
 /**
  * Starting bot command
@@ -12,7 +12,7 @@ import { groupKeyboard } from '@/keyboards/dynamicKeyboard';
 const startHandler = async (ctx: Context) => {
   await ctx.replyWithPhoto({
     source: 'src/assets/images/start-screen.png'
-  }, createCaption(helloMessage() as string));
+  }, createCaption(helloMessage()));
 
   await ctx.reply('Выбор', await groupKeyboard());
 };
