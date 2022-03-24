@@ -7,8 +7,8 @@ const API = axios.create({
 });
 
 /** Get groups list */
-export const getGroups = () =>
-  API.get<Group[]>('/group').then((response) => response.data);
+export const getGroups = (page = 1, limit = 0) =>
+  API.get<Group[]>('/group', { params: { page, limit } }).then((response) => response.data);
 
 /** Get times list */
 export const getTimes = () =>
