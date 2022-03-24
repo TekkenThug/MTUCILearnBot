@@ -4,7 +4,7 @@
   "description": "Telegram bot for MTUCILearn",
   "main": "./dist/app.js",
   "scripts": {
-    "watch": "webpack --watch --progress",
+    "dev": "webpack --watch --progress",
     "build": "cross-env NODE_ENV=production webpack"
   },
   "keywords": [],
