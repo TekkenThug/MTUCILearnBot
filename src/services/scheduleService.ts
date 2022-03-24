@@ -39,7 +39,13 @@ export const getSchedule = async (userID: number, time: ScheduleTime) => {
   });
 
   if (!Array.isArray(schedule)) {
-    return schedule.status === 'HOLIDAY' ? 'Это выходной!' : 'Извините, расписание отсутствует :(';
+    const status = schedule.status;
+
+    if (status === 'HOLIDAY') return 'Это выходной';
+
+    else if (status === 'EMPTY') return 'Извините, расписание отсутствует :(';
+
+    throw new Error('Unknown service status');
   }
 
   const timeDict = await getTimes();
