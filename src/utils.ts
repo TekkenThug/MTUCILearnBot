@@ -6,7 +6,7 @@ import { Dayjs } from 'dayjs';
  * @param single - True, if source string contains only one param
  */
 export const parseParameters = (source: string, single = true): string | string[] => {
-  return single ? source.split('_')[1] : source.split('_');
+  return single ? source.split('_')[1] : source.split('_').slice(1);
 };
 
 /**
