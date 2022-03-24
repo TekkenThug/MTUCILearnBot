@@ -35,11 +35,11 @@ export const getSchedule = async (userID: number, time: ScheduleTime) => {
   const schedule = await getScheduleFromAPI({
     even: isEvenWeek(workDate) ? 'even' : 'odd',
     weekday: workDate.weekday(),
-    userID,
+    userID
   });
 
   if (!Array.isArray(schedule)) {
-      return schedule.status === 'HOLIDAY' ? 'Это выходной!' : 'Извините, расписание отсутствует :('
+    return schedule.status === 'HOLIDAY' ? 'Это выходной!' : 'Извините, расписание отсутствует :(';
   }
 
   const timeDict = await getTimes();
@@ -53,6 +53,6 @@ export const getSchedule = async (userID: number, time: ScheduleTime) => {
 
     (item.type as string) = LessonsType[item.type];
   });
-  
+
   return schedule;
 };
